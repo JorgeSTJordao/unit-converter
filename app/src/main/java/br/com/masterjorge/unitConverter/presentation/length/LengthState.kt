@@ -7,5 +7,6 @@ data class LengthState(
     var unit2: LengthPattern = LengthMap.mapLength[3],
     var value: String = "",
     var result: Float = 0f,
-    val valueError: String? = null
+    val valueError: String? = null,
+    val decimalReadOnly: Boolean = false
 )

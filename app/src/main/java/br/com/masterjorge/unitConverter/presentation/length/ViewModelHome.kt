@@ -38,7 +38,7 @@ class ViewModelHome @Inject constructor(
             }
             is LengthEvents.ChangeValue -> {
                 stateLength = stateLength.copy(
-                    value = event.value,
+                    value = stateLength.value + event.value,
                 )
             }
             is LengthEvents.Convert -> {
@@ -74,13 +74,19 @@ class ViewModelHome @Inject constructor(
                     }
 
             }
-            is LengthEvents.Clear -> { stateLength = LengthState() }
+            is LengthEvents.Clear -> { stateLength = stateLength.copy(
+                value = "",
+                result = 0f
+            )
+            }
             is LengthEvents.Decimal -> {
                 stateLength = stateLength.copy(
+                    decimalReadOnly = true,
                     value = stateLength.value.plus(".")
                 )
             }
             is LengthEvents.Delete -> {
+                if (stateLength.value.last().equals("."))
                     stateLength = stateLength.copy(
                         value = stateLength.value.removeLastChar()
                     )
