@@ -1,5 +1,6 @@
 package br.com.masterjorge.unitConverter.presentation.length
 
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -8,7 +9,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.masterjorge.unitConverter.data.remote.models.History
 import br.com.masterjorge.unitConverter.domain.use_cases.LengthUseCase
+import br.com.masterjorge.unitConverter.domain.use_cases.RecordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ViewModelHome @Inject constructor(
-    private val lengthUseCase: LengthUseCase
+    private val lengthUseCase: LengthUseCase,
+    private val recordUseCase: RecordUseCase
 ): ViewModel() {
 
     var stateLength by mutableStateOf(LengthState())
@@ -37,9 +41,18 @@ class ViewModelHome @Inject constructor(
                     )
             }
             is LengthEvents.ChangeValue -> {
-                stateLength = stateLength.copy(
-                    value = stateLength.value + event.value,
-                )
+                if (stateLength.value.length < 8)
+                    stateLength = stateLength.copy(
+                        value = stateLength.value + event.value,
+                        readOnlyDelete = false,
+                        canAdd = true
+                    )
+                else if (stateLength.value.length == 8)
+                    stateLength = stateLength.copy(
+                        value = stateLength.value + event.value,
+                        readOnlyDelete = false,
+                        canAdd = false
+                    )
             }
             is LengthEvents.Convert -> {
                 val checkInput = lengthUseCase.checkInput(stateLength.value)
@@ -76,20 +89,33 @@ class ViewModelHome @Inject constructor(
             }
             is LengthEvents.Clear -> { stateLength = stateLength.copy(
                 value = "",
-                result = 0f
+                result = 0f,
+                readOnlyDecimal = false,
+                readOnlyDelete = true,
+                canAdd = true,
             )
             }
             is LengthEvents.Decimal -> {
                 stateLength = stateLength.copy(
-                    decimalReadOnly = true,
-                    value = stateLength.value.plus(".")
-                )
+                        value = stateLength.value.plus("."),
+                        readOnlyDecimal = true,
+                        readOnlyDelete = false,
+                        canAdd = true,
+                    )
             }
             is LengthEvents.Delete -> {
-                if (stateLength.value.last().equals("."))
-                    stateLength = stateLength.copy(
-                        value = stateLength.value.removeLastChar()
-                    )
+                if (stateLength.value.isNotEmpty())
+                    stateLength = if (stateLength.value.last() != '.')
+                        stateLength.copy(
+                            value = stateLength.value.removeLastChar(),
+                            canAdd = true
+                        )
+                    else
+                        stateLength.copy(
+                            value = stateLength.value.removeLastChar(),
+                            readOnlyDecimal = false,
+                            canAdd = true
+                        )
             }
         }
     }

@@ -6,6 +6,7 @@ import br.com.masterjorge.unitConverter.domain.repositories.HistoryRepository
 import br.com.masterjorge.unitConverter.domain.use_cases.CalculateLength
 import br.com.masterjorge.unitConverter.domain.use_cases.CheckInput
 import br.com.masterjorge.unitConverter.domain.use_cases.LengthUseCase
+import br.com.masterjorge.unitConverter.domain.use_cases.RecordUseCase
 import br.com.masterjorge.unitConverter.domain.use_cases.history_use_cases.DeleteHistory
 import br.com.masterjorge.unitConverter.domain.use_cases.history_use_cases.GetAllHistories
 import br.com.masterjorge.unitConverter.domain.use_cases.history_use_cases.GetHistory
@@ -33,9 +34,16 @@ object UnitConverterDbModule {
             checkInput = CheckInput(),
             calculateLength = CalculateLength(),
             insertHistory = InsertHistory(historyRepository),
-            deleteHistory = DeleteHistory(historyRepository),
-            getHistory = GetHistory(historyRepository),
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideRecordUseCase(historyRepository: HistoryRepository): RecordUseCase{
+        return RecordUseCase(
             getAllHistories = GetAllHistories(historyRepository),
+            getHistory = GetHistory(historyRepository),
+            deleteHistory = DeleteHistory(historyRepository)
         )
     }
 }

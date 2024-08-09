@@ -1,6 +1,7 @@
 package br.com.masterjorge.unitConverter.presentation.length
 
 import android.graphics.Paint.Align
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -19,18 +21,23 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import br.com.masterjorge.unitConverter.core.components.ButtonConverter
 import br.com.masterjorge.unitConverter.core.components.ButtonIcon
+import br.com.masterjorge.unitConverter.core.components.ButtonReadOnly
 import br.com.masterjorge.unitConverter.domain.models.LengthPattern
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,19 +47,23 @@ fun Home(
     onEvent: (LengthEvents) -> Unit,
     lengthMap: List<LengthPattern> = LengthMap.mapLength,
 ) {
+    var isVisible by remember {
+        mutableStateOf(false)
+    }
     val sheetState = rememberModalBottomSheetState()
     var isSheetOpen by rememberSaveable { mutableStateOf(false) }
-
+    
     Column(
         Modifier
             .fillMaxSize()
             .padding(20.dp),
     ) {
         //Value -> Result -> Units
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 25.dp)
+                .padding(bottom = 140.dp)
             ) {
             Column(
                 modifier = Modifier
@@ -80,7 +91,7 @@ fun Home(
                     .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = "Convert from", fontSize = 10.sp, fontWeight = FontWeight.SemiBold)
+                Text(text = "Convert", fontSize = 10.sp, fontWeight = FontWeight.SemiBold)
                 Text(text = stateLengthState.unit1.name, fontSize = 40.sp)
 
                 Text(
@@ -89,6 +100,24 @@ fun Home(
                 Text(text = stateLengthState.unit2.name, fontSize = 40.sp)
             }
         }
+
+        AnimatedVisibility(
+            visible = isVisible,
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Enabled")
+                Button(onClick = { isVisible = false }) {
+                    Text(text = "Disable")
+                }
+            }
+        }
+
 
         //1 - 3 + Star
         Row(
@@ -99,30 +128,37 @@ fun Home(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
             ,
         ) {
+
             ButtonConverter(
                 modifier = Modifier
                     .background(Color.Green)
                     .aspectRatio(1f)
                     .weight(1f),
                 symbol = "1",
+                canAdd = stateLengthState.canAdd,
                 onClick = { onEvent(LengthEvents.ChangeValue("1")) }
             )
+
             ButtonConverter(
                 modifier = Modifier
                     .background(Color.Green)
                     .aspectRatio(1f)
                     .weight(1f),
                 symbol = "2",
+                canAdd = stateLengthState.canAdd,
                 onClick = { onEvent(LengthEvents.ChangeValue("2")) }
             )
+
             ButtonConverter(
                 modifier = Modifier
                     .background(Color.Green)
                     .aspectRatio(1f)
                     .weight(1f),
                 symbol = "3",
+                canAdd = stateLengthState.canAdd,
                 onClick = { onEvent(LengthEvents.ChangeValue("3")) }
             )
+
             ButtonIcon(modifier = Modifier
                 .background(Color.Green)
                 .aspectRatio(1f)
@@ -135,40 +171,47 @@ fun Home(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 25.dp)
-            ,
+                .padding(bottom = 25.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
+
             ButtonConverter(
                 modifier = Modifier
                     .background(Color.Green)
                     .aspectRatio(1f)
                     .weight(1f),
                 symbol = "4",
+                canAdd = stateLengthState.canAdd,
                 onClick = { onEvent(LengthEvents.ChangeValue("4")) }
             )
+
             ButtonConverter(
                 modifier = Modifier
                     .background(Color.Green)
                     .aspectRatio(1f)
                     .weight(1f),
                 symbol = "5",
+                canAdd = stateLengthState.canAdd,
                 onClick = { onEvent(LengthEvents.ChangeValue("5")) }
             )
+
             ButtonConverter(
                 modifier = Modifier
                     .background(Color.Green)
                     .aspectRatio(1f)
                     .weight(1f),
                 symbol = "6",
+                canAdd = stateLengthState.canAdd,
                 onClick = { onEvent(LengthEvents.ChangeValue("6")) }
             )
-            ButtonConverter(
+
+            ButtonReadOnly(
                 modifier = Modifier
-                    .background(Color.Green)
+                    .background(Color.Red)
                     .aspectRatio(1f)
                     .weight(1f),
                 symbol = "Del",
+                readOnly = stateLengthState.readOnlyDelete,
                 onClick = { onEvent(LengthEvents.Delete) }
             )
         }
@@ -180,30 +223,37 @@ fun Home(
             ,
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
+
             ButtonConverter(
                 modifier = Modifier
                     .background(Color.Green)
                     .aspectRatio(1f)
                     .weight(1f),
                 symbol = "7",
+                canAdd = stateLengthState.canAdd,
                 onClick = { onEvent(LengthEvents.ChangeValue("7")) }
             )
+
             ButtonConverter(
                 modifier = Modifier
                     .background(Color.Green)
                     .aspectRatio(1f)
                     .weight(1f),
                 symbol = "8",
+                canAdd = stateLengthState.canAdd,
                 onClick = { onEvent(LengthEvents.ChangeValue("8")) }
             )
+
             ButtonConverter(
                 modifier = Modifier
                     .background(Color.Green)
                     .aspectRatio(1f)
                     .weight(1f),
                 symbol = "9",
+                canAdd = stateLengthState.canAdd,
                 onClick = { onEvent(LengthEvents.ChangeValue("9")) }
             )
+
             ButtonConverter(
                 modifier = Modifier
                     .background(Color.Green)
@@ -226,26 +276,30 @@ fun Home(
                     .background(Color.Green)
                     .aspectRatio(1f)
                     .weight(1f),
-                symbol = "0",
-                onClick = { onEvent(LengthEvents.ChangeValue("7")) }
+                symbol = "AC",
+                onClick = { onEvent(LengthEvents.Clear) }
             )
+
             ButtonConverter(
+                modifier = Modifier
+                    .background(Color.Green)
+                    .aspectRatio(1f)
+                    .weight(1f),
+                symbol = "0",
+                canAdd = stateLengthState.canAdd,
+                onClick = { onEvent(LengthEvents.ChangeValue("0")) }
+            )
+
+            ButtonReadOnly(
                 modifier = Modifier
                     .background(Color.Green)
                     .aspectRatio(1f)
                     .weight(1f),
                 symbol = ".",
-                decimalReadOnly = stateLengthState.decimalReadOnly,
+                readOnly = stateLengthState.readOnlyDecimal,
                 onClick = { onEvent(LengthEvents.Decimal) }
             )
-            ButtonConverter(
-                modifier = Modifier
-                    .background(Color.Green)
-                    .aspectRatio(1f)
-                    .weight(1f),
-                symbol = "AC",
-                onClick = { onEvent(LengthEvents.Clear) }
-            )
+
             ButtonConverter(
                 modifier = Modifier
                     .background(Color.Green)

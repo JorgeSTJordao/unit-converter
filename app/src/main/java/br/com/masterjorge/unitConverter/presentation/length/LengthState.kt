@@ -8,5 +8,7 @@ data class LengthState(
     var value: String = "",
     var result: Float = 0f,
     val valueError: String? = null,
-    val decimalReadOnly: Boolean = false
+    val readOnlyDelete: Boolean = true,
+    val readOnlyDecimal: Boolean = false,
+    val canAdd: Boolean = true,
 )

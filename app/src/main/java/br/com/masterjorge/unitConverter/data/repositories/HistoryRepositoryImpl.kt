@@ -10,15 +10,15 @@ class HistoryRepositoryImpl(private val dao: HistoryDao): HistoryRepository {
         dao.insertHistory(history)
     }
 
-    override fun getAllHistories(limitItems: Int, beginItem: Int): Flow<List<History>> {
-        return dao.getAllHistories(limitItems, beginItem)
+    override suspend fun getAllHistories(limitItems: Int, offset: Int): List<History> {
+        return dao.getAllHistories(limitItems, offset)
     }
 
     override fun getHistory(historyId: Int): Flow<History> {
         return dao.getHistory(historyId)
     }
 
-    override suspend fun deleteHistory(historyList: List<History>) {
-        dao.deleteHistory(historyList)
+    override suspend fun deleteHistory(allRecords: List<History>) {
+        dao.deleteHistory(allRecords)
     }
 }
