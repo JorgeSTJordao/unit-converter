@@ -47,9 +47,6 @@ fun Home(
     onEvent: (LengthEvents) -> Unit,
     lengthMap: List<LengthPattern> = LengthMap.mapLength,
 ) {
-    var isVisible by remember {
-        mutableStateOf(false)
-    }
     val sheetState = rememberModalBottomSheetState()
     var isSheetOpen by rememberSaveable { mutableStateOf(false) }
     
@@ -98,23 +95,6 @@ fun Home(
                     modifier = Modifier.padding(top = 5.dp),
                     text = "To", fontSize = 10.sp, fontWeight = FontWeight.SemiBold)
                 Text(text = stateLengthState.unit2.name, fontSize = 40.sp)
-            }
-        }
-
-        AnimatedVisibility(
-            visible = isVisible,
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "Enabled")
-                Button(onClick = { isVisible = false }) {
-                    Text(text = "Disable")
-                }
             }
         }
 
