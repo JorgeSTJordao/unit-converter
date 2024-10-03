@@ -8,7 +8,7 @@ class GetHistory(
     private val historyRepository: HistoryRepository
 ) {
 
-    operator fun invoke(idHistory: Int): Flow<History> {
+    suspend operator fun invoke(idHistory: Int): History? {
         return historyRepository.getHistory(idHistory)
     }
 }

@@ -7,9 +7,9 @@ interface HistoryRepository {
 
     suspend fun insertHistory(history: History)
 
-    suspend fun getAllHistories(limitItems: Int, offset: Int): List<History>
+    suspend fun getAllHistories(): Flow<List<History>>
 
-    fun getHistory(historyId: Int): Flow<History>
+    suspend fun getHistory(historyId: Int): History?
 
-    suspend fun deleteHistory(allRecords: List<History>)
+    suspend fun deleteAll()
 }

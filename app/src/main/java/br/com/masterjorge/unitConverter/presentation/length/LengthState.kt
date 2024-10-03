@@ -1,5 +1,6 @@
 package br.com.masterjorge.unitConverter.presentation.length
 
+import br.com.masterjorge.unitConverter.data.remote.models.History
 import br.com.masterjorge.unitConverter.domain.models.LengthPattern
 
 data class LengthState(
@@ -11,4 +12,5 @@ data class LengthState(
     val readOnlyDelete: Boolean = true,
     val readOnlyDecimal: Boolean = false,
     val canAdd: Boolean = true,
+    var recordList: List<History> = emptyList()
 )

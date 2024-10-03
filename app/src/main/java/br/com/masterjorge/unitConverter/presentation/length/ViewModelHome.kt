@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import br.com.masterjorge.unitConverter.data.remote.models.History
 import br.com.masterjorge.unitConverter.domain.use_cases.LengthUseCase
 import br.com.masterjorge.unitConverter.domain.use_cases.RecordUseCase
@@ -25,8 +26,18 @@ class ViewModelHome @Inject constructor(
     private val recordUseCase: RecordUseCase
 ): ViewModel() {
 
+
     var stateLength by mutableStateOf(LengthState())
         private set //Setter is private, but getter is public
+
+    init {
+        viewModelScope.launch {
+            recordUseCase.getAllHistories.invoke().collect { record ->
+                stateLength.recordList = record
+            }
+        }
+    }
+
 
     fun onEvent(event: LengthEvents){
         when (event) {
@@ -116,6 +127,15 @@ class ViewModelHome @Inject constructor(
                             readOnlyDecimal = false,
                             canAdd = true
                         )
+            }
+
+            LengthEvents.DeleteAll -> {
+                viewModelScope.launch {
+                    recordUseCase.deleteAll.invoke()
+                    stateLength = stateLength.copy(
+                        recordList = emptyList()
+                    )
+                }
             }
         }
     }

@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 class GetAllHistories(
     private val historyRepository: HistoryRepository
 ) {
-    suspend operator fun invoke(limitItems: Int, beginItem: Int): List<History> {
-        return historyRepository.getAllHistories(limitItems, beginItem)
+    suspend operator fun invoke(): Flow<List<History>> {
+        return historyRepository.getAllHistories()
     }
 }

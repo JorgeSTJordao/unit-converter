@@ -7,7 +7,7 @@ import br.com.masterjorge.unitConverter.domain.use_cases.CalculateLength
 import br.com.masterjorge.unitConverter.domain.use_cases.CheckInput
 import br.com.masterjorge.unitConverter.domain.use_cases.LengthUseCase
 import br.com.masterjorge.unitConverter.domain.use_cases.RecordUseCase
-import br.com.masterjorge.unitConverter.domain.use_cases.history_use_cases.DeleteHistory
+import br.com.masterjorge.unitConverter.domain.use_cases.history_use_cases.DeleteAll
 import br.com.masterjorge.unitConverter.domain.use_cases.history_use_cases.GetAllHistories
 import br.com.masterjorge.unitConverter.domain.use_cases.history_use_cases.GetHistory
 import br.com.masterjorge.unitConverter.domain.use_cases.history_use_cases.InsertHistory
@@ -43,7 +43,7 @@ object UnitConverterDbModule {
         return RecordUseCase(
             getAllHistories = GetAllHistories(historyRepository),
             getHistory = GetHistory(historyRepository),
-            deleteHistory = DeleteHistory(historyRepository)
+            deleteAll = DeleteAll(historyRepository)
         )
     }
 }
