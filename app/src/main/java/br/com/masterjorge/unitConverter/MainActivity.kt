@@ -26,6 +26,7 @@ class MainActivity : ComponentActivity() {
                     Box(modifier = Modifier.padding(paddingValues)) {
                         val viewModelHome = hiltViewModel<ViewModelHome>()
                         val stateLength = viewModelHome.stateLength
+
                         Home(
                             stateLengthState = stateLength,
                             onEvent = viewModelHome::onEvent,
